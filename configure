@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e pipefail
+IFS=$'\n\t'
+
+APACHE_ROOT=${APACHE_ROOT-'/var/www/public'}
+
+cat > /etc/apache2/sites-enabled/000-default.conf <<EOF
+ServerName localhost
+
+<VirtualHost *:80>
+    LogLevel info
+
+    DocumentRoot ${APACHE_ROOT}
+
+    <Directory ~ "/var/www/.+">
+        Require all granted
+        AllowOverride All
+        Options FollowSymLinks
+    </Directory>
+</VirtualHost>
+EOF
