@@ -67,6 +67,8 @@ RUN chmod 755 /opt/configure
 
 WORKDIR /var/www
 
+RUN a2enmod rewrite
+
 ENTRYPOINT ["/opt/entrypoint"]
 
 CMD ["apache2-foreground"]
