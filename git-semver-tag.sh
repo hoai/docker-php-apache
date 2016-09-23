@@ -9,5 +9,5 @@ MINOR=${BASH_REMATCH[2]}
 PATCH=${BASH_REMATCH[3]}
 
 git tag "$MAJOR.$MINOR.$PATCH"
-git tag "$MAJOR.$MINOR"
-git tag "$MAJOR"
+git tag -f "$MAJOR.$MINOR"
+git tag -f "$MAJOR"
