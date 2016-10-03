@@ -1,8 +1,6 @@
 FROM php:7.0-apache
 
-RUN apt-get update
-
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y --fix-missing \
     build-essential \
     pkg-config \
     git-core \
@@ -24,7 +22,8 @@ RUN apt-get install -y \
     vim \
     wget \
     netcat \
-    chrpath
+    chrpath \
+	sudo
 
 RUN docker-php-ext-install \
     iconv \
@@ -48,12 +47,6 @@ RUN bash /install-php-memcached.sh && rm /install-php-memcached.sh
 COPY scripts/install-php-imagick.sh /install-php-imagick.sh
 RUN bash /install-php-imagick.sh && rm /install-php-imagick.sh
 
-# install composer
-WORKDIR /tmp
-RUN wget https://getcomposer.org/composer.phar
-RUN mv composer.phar /bin/composer
-RUN chmod 700 /bin/composer
-
 # cleanup
 RUN apt-get clean
 RUN apt-get autoremove -y
@@ -65,9 +58,30 @@ COPY configure /opt/configure
 RUN chmod 755 /opt/entrypoint
 RUN chmod 755 /opt/configure
 
-WORKDIR /var/www
-
+# enable apache modules
 RUN a2enmod rewrite
+
+# add user
+RUN groupadd docker
+RUN useradd docker -s /bin/bash -m -g docker
+RUN usermod -aG www-data docker
+RUN usermod -aG sudo docker
+#RUN echo docker:password | chpasswd
+RUN echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# install composer
+WORKDIR /tmp
+RUN wget https://getcomposer.org/composer.phar
+RUN mv composer.phar /bin/composer
+RUN chown docker:docker /bin/composer
+RUN chmod 755 /bin/composer
+
+# set user to run as
+USER docker
+
+
+# set working directory
+WORKDIR /var/www
 
 ENTRYPOINT ["/opt/entrypoint"]
 

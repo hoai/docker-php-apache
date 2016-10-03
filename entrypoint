@@ -1,9 +1,9 @@
 #!/bin/bash
 
-bash /opt/configure
+sudo -E bash /opt/configure
 
 if [ -f /opt/bootstrap ]; then
 	bash /opt/bootstrap
 fi
 
-exec "$@"
+exec sudo -E "$@"
