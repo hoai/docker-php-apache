@@ -6,4 +6,4 @@ if [ -f /opt/bootstrap ]; then
 	bash /opt/bootstrap
 fi
 
-exec sudo -E "$@"
+exec "$@"

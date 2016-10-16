@@ -2,7 +2,10 @@
 set -e pipefail
 IFS=$'\n\t'
 
-APACHE_ROOT=${APACHE_ROOT-'/var/www/public'}
+APACHE_ROOT=${APACHE_ROOT-/var/www/public}
+APACHE_AUTH_BASIC=${APACHE_AUTH-0}
+APACHE_AUTH_NAME=${APACHE_AUTH_NAME-"Secured Environment"}
+APACHE_AUTH_FILE=${APACHE_AUTH_FILE-/var/www/.htpasswd}
 
 cat > /etc/apache2/sites-enabled/000-default.conf <<EOF
 ServerName localhost
@@ -16,6 +19,13 @@ ServerName localhost
         Require all granted
         AllowOverride All
         Options FollowSymLinks
+
+        <If "-T env('APACHE_AUTH')">
+            AuthType Basic
+            AuthName "${APACHE_AUTH_NAME}"
+            AuthUserFile ${APACHE_AUTH_FILE}
+            Require valid-user
+        </If>
     </Directory>
 </VirtualHost>
 EOF

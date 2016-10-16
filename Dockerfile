@@ -1,5 +1,7 @@
-FROM php:7.0-apache
+# build from php 7.1
+FROM php:7.1-apache
 
+# install supporting packages
 RUN apt-get update && apt-get install -y --fix-missing \
     build-essential \
     pkg-config \
@@ -23,8 +25,9 @@ RUN apt-get update && apt-get install -y --fix-missing \
     wget \
     netcat \
     chrpath \
-	sudo
+    sudo
 
+# install officially supported php extensions
 RUN docker-php-ext-install \
     iconv \
     mcrypt \
@@ -39,35 +42,21 @@ RUN docker-php-ext-install \
     pgsql \
     zip
 
-# install memcached
+# install memcached extension
 COPY scripts/install-php-memcached.sh /install-php-memcached.sh
 RUN bash /install-php-memcached.sh && rm /install-php-memcached.sh
 
-# install imagick
+# install imagick extension
 COPY scripts/install-php-imagick.sh /install-php-imagick.sh
 RUN bash /install-php-imagick.sh && rm /install-php-imagick.sh
 
-# cleanup
+# cleanup apt
 RUN apt-get clean
 RUN apt-get autoremove -y
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/*
 
-# entrypoint/configuration scripts
-COPY entrypoint /opt/entrypoint
-COPY configure /opt/configure
-RUN chmod 755 /opt/entrypoint
-RUN chmod 755 /opt/configure
-
 # enable apache modules
 RUN a2enmod rewrite
-
-# add user
-RUN groupadd docker
-RUN useradd docker -s /bin/bash -m -g docker
-RUN usermod -aG www-data docker
-RUN usermod -aG sudo docker
-#RUN echo docker:password | chpasswd
-RUN echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # install composer
 WORKDIR /tmp
@@ -76,13 +65,22 @@ RUN mv composer.phar /bin/composer
 RUN chown docker:docker /bin/composer
 RUN chmod 755 /bin/composer
 
-# set user to run as
-USER docker
-
+# entrypoint/configuration scripts
+COPY entrypoint /opt/entrypoint
+COPY configure /opt/configure
+RUN chmod 755 /opt/entrypoint
+RUN chmod 755 /opt/configure
 
 # set working directory
 WORKDIR /var/www
 
-ENTRYPOINT ["/opt/entrypoint"]
+# add and run as docker user
+RUN groupadd docker
+RUN useradd docker -s /bin/bash -m -g docker
+RUN usermod -aG www-data docker
+RUN usermod -aG sudo docker
+RUN echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER docker
 
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/opt/entrypoint"]
+CMD ["sudo", "-E", "apache2-foreground"]
