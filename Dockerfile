@@ -1,5 +1,5 @@
-# build from php 7.1
-FROM php:7.1-apache
+# build from php 7.0
+FROM php:7.0-apache
 
 # install supporting packages
 RUN apt-get update && apt-get install -y --fix-missing \
@@ -62,7 +62,6 @@ RUN a2enmod rewrite
 WORKDIR /tmp
 RUN wget https://getcomposer.org/composer.phar
 RUN mv composer.phar /bin/composer
-RUN chown docker:docker /bin/composer
 RUN chmod 755 /bin/composer
 
 # entrypoint/configuration scripts
@@ -80,7 +79,13 @@ RUN useradd docker -s /bin/bash -m -g docker
 RUN usermod -aG www-data docker
 RUN usermod -aG sudo docker
 RUN echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# give docker user permission to run composer
+RUN chown docker:docker /bin/composer
+
+# run comtainer as docker user
 USER docker
 
+# entrypoint/command
 ENTRYPOINT ["/opt/entrypoint"]
 CMD ["sudo", "-E", "apache2-foreground"]
