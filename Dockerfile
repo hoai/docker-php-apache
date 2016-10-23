@@ -50,6 +50,10 @@ RUN bash /install-php-memcached.sh && rm /install-php-memcached.sh
 COPY scripts/install-php-imagick.sh /install-php-imagick.sh
 RUN bash /install-php-imagick.sh && rm /install-php-imagick.sh
 
+# install mod_pagespeed
+COPY scripts/install-mod-pagespeed.sh /install-mod-pagespeed.sh
+RUN bash /install-mod-pagespeed.sh && rm /install-mod-pagespeed.sh
+
 # cleanup apt
 RUN apt-get clean
 RUN apt-get autoremove -y
