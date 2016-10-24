@@ -18,7 +18,7 @@ then
 
 	docker build -t "$DOCKER_IMAGE:latest" .
 
-	docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$MAJOR.$MINOR:$PATCH"
+	docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$MAJOR.$MINOR.$PATCH"
 	docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$MAJOR.$MINOR"
 	docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$MAJOR"
 
