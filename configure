@@ -12,8 +12,8 @@ ServerName localhost
 
 <VirtualHost *:80>
     LogLevel info
+    ModPagespeed off
 
-    ModPagespeed unplugged
     DocumentRoot ${APACHE_ROOT}
 
     <Directory ~ "/var/www/.+">

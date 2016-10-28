@@ -61,6 +61,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/*
 
 # enable apache modules
 RUN a2enmod rewrite
+RUN a2enmod headers
 
 # install composer
 WORKDIR /tmp
