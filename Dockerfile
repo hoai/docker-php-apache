@@ -50,6 +50,12 @@ RUN bash /install-php-memcached.sh && rm /install-php-memcached.sh
 COPY scripts/install-php-imagick.sh /install-php-imagick.sh
 RUN bash /install-php-imagick.sh && rm /install-php-imagick.sh
 
+# install redis / xdebug extensions
+RUN pecl install redis xdebug
+RUN docker-php-ext-enable \
+    redis \
+    xdebug
+
 # cleanup apt
 RUN apt-get clean
 RUN apt-get autoremove -y
