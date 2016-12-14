@@ -12,7 +12,6 @@ ServerName localhost
 
 <VirtualHost *:80>
     LogLevel info
-    ModPagespeed off
 
     DocumentRoot ${APACHE_ROOT}
 
