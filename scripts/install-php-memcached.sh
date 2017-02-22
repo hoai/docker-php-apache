@@ -5,7 +5,7 @@ set -e
 cd /tmp
 git clone https://github.com/php-memcached-dev/php-memcached
 cd /tmp/php-memcached
-git checkout -b php7 origin/php7
+git checkout -b tags/2.2.0
 
 # compile and install
 phpize
