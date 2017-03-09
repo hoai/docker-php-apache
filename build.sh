@@ -12,11 +12,13 @@ then
 	MINOR=${BASH_REMATCH[2]}
 	PATCH=${BASH_REMATCH[3]}
 
-	git tag -f "$MAJOR.$MINOR.$PATCH"
-	git tag -f "$MAJOR.$MINOR"
-	git tag -f "$MAJOR"
+	#git tag -f "$MAJOR.$MINOR.$PATCH"
+	#git tag -f "$MAJOR.$MINOR"
+	#git tag -f "$MAJOR"
 
 	docker build -t "$DOCKER_IMAGE:latest" .
+
+	#docker build -t "$DOCKER_IMAGE:rc" .
 
 	docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$MAJOR.$MINOR.$PATCH"
 	docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$MAJOR.$MINOR"
