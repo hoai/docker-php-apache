@@ -3,29 +3,30 @@ FROM php:5.6-apache
 
 # install supporting packages
 RUN apt-get update && apt-get install -y --fix-missing \
-    build-essential \
-    pkg-config \
-    git-core \
     autoconf \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libpng12-dev \
+    build-essential \
+    chrpath \
+    curl \
+    g++ \
+    git-core \
+    imagemagick \
     libcurl4-openssl-dev \
-    libpq-dev \
+    libjpeg62-turbo-dev \
+    libmagickwand-dev \
+    libmcrypt-dev \
     libmemcached-dev \
     libmemcached11 \
+    libpng12-dev \
+    libpq-dev \
     libsqlite3-dev \
-    libmagickwand-dev \
-    imagemagick \
-    subversion \
-    python \
-    g++ \
-    curl \
-    vim \
-    wget \
+    libtidy-dev \
     netcat \
-    chrpath \
-    sudo
+    pkg-config \
+    python \
+    subversion \
+    sudo \
+    vim \
+    wget
 
 # install officially supported php extensions
 RUN docker-php-ext-install \
@@ -40,21 +41,30 @@ RUN docker-php-ext-install \
     pdo_mysql \
     pdo_sqlite \
     pgsql \
+    tidy \
     zip
 
-# install memcached extension
-COPY scripts/install-php-memcached.sh /install-php-memcached.sh
-RUN bash /install-php-memcached.sh && rm /install-php-memcached.sh
+# Install PHP extensions provided by debian
+RUN apt install -y php5-memcached php5-imagick php5-mssql php5-redis php5-xdebug
 
-# install imagick extension
-COPY scripts/install-php-imagick.sh /install-php-imagick.sh
-RUN bash /install-php-imagick.sh && rm /install-php-imagick.sh
+RUN cp /etc/php5/mods-available/imagick.ini /usr/local/etc/php/conf.d/
+RUN cp /usr/lib/php5/*/imagick.so /usr/local/lib/php/extensions/*/
 
-# install redis / xdebug extensions
-RUN pecl install redis xdebug
-RUN docker-php-ext-enable \
-    redis \
-    xdebug
+RUN cp /etc/php5/mods-available/memcached.ini /usr/local/etc/php/conf.d/
+RUN cp /usr/lib/php5/*/memcached.so /usr/local/lib/php/extensions/*/
+
+RUN cp /etc/php5/mods-available/opcache.ini /usr/local/etc/php/conf.d/
+RUN cp /usr/lib/php5/*/opcache.so /usr/local/lib/php/extensions/*/
+
+RUN cp /etc/php5/mods-available/redis.ini /usr/local/etc/php/conf.d/
+RUN cp /usr/lib/php5/*/redis.so /usr/local/lib/php/extensions/*/
+
+RUN cp /etc/php5/mods-available/xdebug.ini /usr/local/etc/php/conf.d/
+RUN cp /usr/lib/php5/*/xdebug.so /usr/local/lib/php/extensions/*/
+
+RUN cp /etc/php5/mods-available/mssql.ini /usr/local/etc/php/conf.d/
+RUN cp /usr/lib/php5/*/mssql.so /usr/local/lib/php/extensions/*/
+
 
 # cleanup apt
 RUN apt-get clean

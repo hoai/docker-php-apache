@@ -1,6 +1,6 @@
 # PHP/Apache
 
-PHP/Apache docker image for local development. Built from the official `php:7.0-apache` image.
+PHP/Apache docker image for local development. Built from the official `php:5.6-apache` image.
 
 [View on Docker Hub](https://hub.docker.com/r/imarcagency/php-apache)
 
