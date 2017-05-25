@@ -35,6 +35,7 @@ RUN docker-php-ext-install \
     opcache \
     curl \
     gd \
+    mysql \
     mysqli \
     pdo \
     pdo_pgsql \
