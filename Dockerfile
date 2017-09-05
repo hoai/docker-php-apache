@@ -39,7 +39,9 @@ RUN docker-php-ext-install \
     pdo_pgsql \
     pdo_mysql \
     pdo_sqlite \
+    pspell \
     pgsql \
+    soap \
     zip
 
 # install memcached extension
@@ -91,6 +93,9 @@ RUN chown docker:docker /bin/composer
 
 # run comtainer as docker user
 USER docker
+
+# copy php.ini
+COPY php.ini /usr/local/etc/php/conf.d
 
 # entrypoint/command
 ENTRYPOINT ["/opt/entrypoint"]
