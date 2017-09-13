@@ -1,5 +1,5 @@
 # build from php 7.0
-FROM php:7.0-apache
+FROM php:7-apache
 
 # install supporting packages
 RUN apt-get update && apt-get install -y --fix-missing \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --fix-missing \
     libpng12-dev \
     libcurl4-openssl-dev \
     libpq-dev \
+    libpspell-dev \
     libmemcached-dev \
     libmemcached11 \
     libsqlite3-dev \
