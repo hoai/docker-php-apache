@@ -1,9 +1,0 @@
-#!/bin/bash
-
-sudo -E bash /opt/configure
-
-if [ -f /opt/bootstrap ]; then
-	bash /opt/bootstrap
-fi
-
-exec "$@"

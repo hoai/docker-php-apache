@@ -1,5 +1,4 @@
-# build from php 7.0
-FROM php:7-apache
+FROM php:7.1.14-apache
 
 # install supporting packages
 RUN apt-get update && apt-get install -y --fix-missing \
@@ -25,8 +24,7 @@ RUN apt-get update && apt-get install -y --fix-missing \
     vim \
     wget \
     netcat \
-    chrpath \
-    sudo
+    chrpath
 
 # install officially supported php extensions
 RUN docker-php-ext-install \
@@ -59,45 +57,28 @@ RUN docker-php-ext-enable \
     redis \
     xdebug
 
+# install composer
+WORKDIR /tmp
+RUN wget https://getcomposer.org/composer.phar
+RUN mv composer.phar /bin/composer
+RUN chmod 700 /bin/composer
+
 # cleanup apt
 RUN apt-get clean
 RUN apt-get autoremove -y
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/src/*
 
 # enable apache modules
-RUN a2enmod rewrite headers cache cache_disk expires
-
-# install composer
-WORKDIR /tmp
-RUN wget https://getcomposer.org/composer.phar
-RUN mv composer.phar /bin/composer
-RUN chmod 755 /bin/composer
-
-# entrypoint/configuration scripts
-COPY entrypoint /opt/entrypoint
-COPY configure /opt/configure
-RUN chmod 755 /opt/entrypoint
-RUN chmod 755 /opt/configure
-
-# set working directory
-WORKDIR /var/www
-
-# add and run as docker user
-RUN groupadd docker
-RUN useradd docker -s /bin/bash -m -g docker
-RUN usermod -aG www-data docker
-RUN usermod -aG sudo docker
-RUN echo "docker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-# give docker user permission to run composer
-RUN chown docker:docker /bin/composer
-
-# run comtainer as docker user
-USER docker
+RUN a2enmod rewrite headers cache cache_disk expires vhost_alias
 
 # copy php.ini
 COPY php.ini /usr/local/etc/php/conf.d
 
+# copy apache config
+COPY /000-default.conf /etc/apache2/sites-enabled/000-default.conf
+
 # entrypoint/command
-ENTRYPOINT ["/opt/entrypoint"]
-CMD ["sudo", "-E", "apache2-foreground"]
+COPY docker-entrypoint /usr/local/bin/
+RUN chmod 700 /usr/local/bin/docker-entrypoint
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+CMD ["apache2-foreground"]
